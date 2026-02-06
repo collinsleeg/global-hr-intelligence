@@ -51,10 +51,17 @@ def init_services():
         # 使用 ONNX 版本，不需要 sentence-transformers
         embedding_func = ONNXMiniLM_L6_V2()
 
-    collection = client.get_collection(
-        name=COLLECTION_NAME,
-        embedding_function=embedding_func
-    )
+    try:
+        collection = client.get_collection(
+            name=COLLECTION_NAME,
+            embedding_function=embedding_func
+        )
+    except Exception as e:
+        print(f"  警告: 获取集合失败 ({e})，尝试创建新集合")
+        collection = client.create_collection(
+            name=COLLECTION_NAME,
+            embedding_function=embedding_func
+        )
 
     # 初始化Claude
     claude_client = anthropic.Anthropic(
