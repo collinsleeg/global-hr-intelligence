@@ -1,38 +1,39 @@
-#!/usr/bin/env python3
-"""
-知识问答服务 - Web版（Flask）- 重新设计版
-绿色主色调 + 出海元素 + 高级感 + 科技感
-"""
+  #!/usr/bin/env python3
+  """
+  知识问答服务 - Web版（Flask）- 重新设计版
+  绿色主色调 + 出海元素 + 高级感 + 科技感
+  """
 
-from flask import Flask, request, jsonify, render_template_string
-from flask_cors import CORS
-import chromadb
-from chromadb.utils import embedding_functions
-import os
-from dotenv import load_dotenv
-import anthropic
-import jieba
-from openai import OpenAI
+  from flask import Flask, request, jsonify, render_template_string
+  from flask_cors import CORS
+  import chromadb
+  from chromadb.utils import embedding_functions
+  from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
+  import os
+  from dotenv import load_dotenv
+  import anthropic
+  import jieba
+  from openai import OpenAI
 
-# 设置 Transformers 离线模式以使用本地缓存的模型
-os.environ['TRANSFORMERS_OFFLINE'] = '1'
-os.environ['HF_DATASETS_OFFLINE'] = '1'
+  # 设置 Transformers 离线模式以使用本地缓存的模型
+  os.environ['TRANSFORMERS_OFFLINE'] = '1'
+  os.environ['HF_DATASETS_OFFLINE'] = '1'
 
-load_dotenv(override=True)
+  load_dotenv(override=True)
 
-app = Flask(__name__)
-CORS(app)
+  app = Flask(__name__)
+  CORS(app)
 
-# 配置
-DB_PATH = "knowledge_db"
-COLLECTION_NAME = "country_employment_guides"
+  # 配置
+  DB_PATH = "knowledge_db"
+  COLLECTION_NAME = "country_employment_guides"
 
-# 初始化
-client = None
-collection = None
-claude_client = None
+  # 初始化
+  client = None
+  collection = None
+  claude_client = None
 
- def init_services():
+  def init_services():
       """初始化服务"""
       global client, collection, claude_client
 
@@ -61,6 +62,7 @@ claude_client = None
       )
 
       print("✓ 服务初始化完成")
+
 
 
 def query_knowledge_base(question, top_k=3):
