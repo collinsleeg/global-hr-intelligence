@@ -40,16 +40,16 @@ def init_services():
     client = chromadb.PersistentClient(path=DB_PATH)
 
     # 使用与构建时相同的embedding函数
-    openai_key = os.getenv('OPENAI_API_KEY')
-    if openai_key:
-        embedding_func = embedding_functions.OpenAIEmbeddingFunction(
-            api_key=openai_key,
-            model_name="text-embedding-3-small"
-        )
-    else:
-        embedding_func = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name="all-MiniLM-L6-v2"
-        )
+openai_key = os.getenv('OPENAI_API_KEY')
+      if openai_key:
+          embedding_func = embedding_functions.OpenAIEmbeddingFunction(
+              api_key=openai_key,
+              model_name="text-embedding-3-small"
+          )
+      else:
+          # 使用 ONNX 版本，不需要 sentence-transformers
+          embedding_func = ONNXMiniLM_L6_V2()
+
 
     collection = client.get_collection(
         name=COLLECTION_NAME,
