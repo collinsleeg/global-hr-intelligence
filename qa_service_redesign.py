@@ -32,15 +32,15 @@ client = None
 collection = None
 claude_client = None
 
-def init_services():
-    """初始化服务"""
-    global client, collection, claude_client
+ def init_services():
+      """初始化服务"""
+      global client, collection, claude_client
 
-    # 初始化ChromaDB
-    client = chromadb.PersistentClient(path=DB_PATH)
+      # 初始化ChromaDB
+      client = chromadb.PersistentClient(path=DB_PATH)
 
-    # 使用与构建时相同的embedding函数
-openai_key = os.getenv('OPENAI_API_KEY')
+      # 使用与构建时相同的embedding函数
+      openai_key = os.getenv('OPENAI_API_KEY')
       if openai_key:
           embedding_func = embedding_functions.OpenAIEmbeddingFunction(
               api_key=openai_key,
@@ -50,18 +50,18 @@ openai_key = os.getenv('OPENAI_API_KEY')
           # 使用 ONNX 版本，不需要 sentence-transformers
           embedding_func = ONNXMiniLM_L6_V2()
 
+      collection = client.get_collection(
+          name=COLLECTION_NAME,
+          embedding_function=embedding_func
+      )
 
-    collection = client.get_collection(
-        name=COLLECTION_NAME,
-        embedding_function=embedding_func
-    )
+      # 初始化Claude
+      claude_client = anthropic.Anthropic(
+          api_key=os.getenv('ANTHROPIC_API_KEY')
+      )
 
-    # 初始化Claude
-    claude_client = anthropic.Anthropic(
-        api_key=os.getenv('ANTHROPIC_API_KEY')
-    )
+      print("✓ 服务初始化完成")
 
-    print("✓ 服务初始化完成")
 
 def query_knowledge_base(question, top_k=3):
     """查询知识库 - 智能混合检索（兼容旧接口）"""
